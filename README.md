@@ -68,12 +68,13 @@ Run the following statements after connecting to the server (step 5 in Installin
 * **all columns have to specified in this format: table.column**
 
 
-
+```
     CREATE FRAGMENT fragment_1 sqlite:///frag1.db ON my_table (id, name);
     CREATE FRAGMENT fragment_2 sqlite:///frag2.db ON my_table (id, gender); # for VF to work you need a unifying attributed eg id here
 
     # this next step assumes you've already created the sqlite databases frag1.db and frag2.db, and the table my_table in each of them and filled them with some test data
     SELECT my_table.id, my_table.name, my_table.gender FROM my_table; # you have to specify the columns in this format exactly: table.column
+```
 
 ### Horizontal Fragmentation
 
@@ -81,7 +82,7 @@ Run the following statements after connecting to the server (step 5 in Installin
 * **all columns have to specified in this format: table.column**
 
 
-
+```
     CREATE TABLE my_table2; # create a new table to play with
 
     CREATE FRAGMENT fragment_1 sqlite:///frag3.db ON my_table2 (*);
@@ -89,8 +90,9 @@ Run the following statements after connecting to the server (step 5 in Installin
 
     # this assumes the fragments are already created and pre-filled with fragmented data
     SELECT my_table2.id, my_table2.fee FROM my_table2;
+```
 
-### Joins on Fragmented table
+### Joins on Fragmented tables
 
     SELECT my_table.id, my_table.name, my_table2.fee FROM my_table JOIN my_table2 ON my_table.id = my_table2.id;
 
