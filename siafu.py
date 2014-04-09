@@ -136,6 +136,14 @@ class Select(object):
     def process(self, siafu):
         # for each table select and retrieve relevant data
         for table in self.tables():
+
+            link = None
+
+            if not siafu.table_exists(table):
+                raise SiafuError(
+                "SELECT ... FROM {0}".format(table),
+                "Table does not exist")
+
             columns = self.columns(table)
             # retrieve table fragments
             rows = siafu.get_fragments(table)
@@ -179,6 +187,7 @@ class Select(object):
                 for j in range(len(data)):
                     part = data[j]
                     part_table_name = table+"_part_"+repr(j)
+                    part_cols = cols[j]
 
                     query = "DROP TABLE IF EXISTS {0}".format(part_table_name)
                     siafu.connection.execute(query)
@@ -187,7 +196,7 @@ class Select(object):
 
                     part_tables.append(part_table_name)
                     siafu.connection.execute(query.format(
-                        part_table_name, ",".join(cols[j])))
+                        part_table_name, ",".join(part_cols)))
                     query = "INSERT INTO {0}({1}) VALUES({2})"
                     for row in part:
                         vals = ""
@@ -200,8 +209,11 @@ class Select(object):
                             if i < (len(values) - 1):
                                 vals += ","
 
+
+                        # insert_cols = [part_table_name+"."+x for x in part_cols]
+
                         siafu.connection.execute(query.format(
-                            part_table_name, ",".join(cols[j]), vals))
+                            part_table_name, ",".join(part_cols), vals))
 
                 query = "SELECT {0} FROM {1} JOIN {2}"
                 join_str = ""
@@ -222,9 +234,13 @@ class Select(object):
             query = "DROP TABLE IF EXISTS {0}".format(table)
             siafu.connection.execute(query)
 
+            create_cols = list(columns)
+            if link and link not in create_cols:
+                create_cols.append(link)
+
             query = "CREATE TEMP TABLE {0} ({1})"
             siafu.connection.execute(query.format(
-                table, ",".join(columns)))
+                table, ",".join(create_cols)))
 
             query = "INSERT INTO {0}({1}) VALUES({2})"
             for row in data:
@@ -241,7 +257,7 @@ class Select(object):
                         vals += ","
 
                 siafu.connection.execute(query.format(
-                    table, ",".join(columns), vals))
+                    table, ",".join(create_cols), vals))
 
         query = "select {0} from {1} where {2}" if len(self.selection()) > 0 else "select {0} from {1}"
         results = siafu.connection.execute(query.format(
