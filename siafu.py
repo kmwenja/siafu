@@ -141,6 +141,12 @@ class Select(object):
         return sel
 
     def process(self, siafu):
+
+        if not siafu.current_database:
+            raise SiafuError(
+                "SELECT ...",
+                "No database selected")
+
         # for each table select and retrieve relevant data
         for table in self.tables():
 
@@ -322,31 +328,31 @@ class Siafu(object):
 
             if cmd == 'use':
                 self.use_database(res['db_name'])
-                return "USE {0}".format(res['db_name'])
+                return "USE {0} OK".format(res['db_name'])
 
             if cmd == 'create database':
                 self.create_database(res['db_name'])
-                return "CREATE DB {0}".format(res['db_name'])
+                return "CREATE DB {0} OK".format(res['db_name'])
 
             if cmd == 'drop database':
                 self.drop_database(res['db_name'])
-                return "DROP DB {0}".format(res['db_name'])
+                return "DROP DB {0} OK".format(res['db_name'])
 
             if cmd == 'create table':
                 self.create_table(res['table_name'])
-                return "CREATE TABLE {0}".format(res['table_name'])
+                return "CREATE TABLE {0} OK".format(res['table_name'])
 
             if cmd == 'drop table':
                 self.drop_table(res['table_name'])
-                return "DROP TABLE {0}".format(res['table_name'])
+                return "DROP TABLE {0} OK".format(res['table_name'])
 
             if cmd == 'create fragment':
                 self.create_fragment(res['fragment_name'], res['table_name'], res['location'], res['columns'])
-                return "CREATE FRAGMENT {0}".format(res['fragment_name'])
+                return "CREATE FRAGMENT {0} OK".format(res['fragment_name'])
 
             if cmd == 'drop fragment':
                 self.drop_fragment(res['fragment_name'], res['table_name'])
-                return "DROP FRAGMENT {0}".format(res['fragment_name'])
+                return "DROP FRAGMENT {0} OK".format(res['fragment_name'])
 
             if cmd == 'show databases':
                 return str(self.show_databases())
