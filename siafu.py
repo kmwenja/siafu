@@ -54,7 +54,14 @@ class Select(object):
         return set(tbls)
 
     def columns(self, table=None):
-        cols = self.projection(table)
+        cols = []
+
+        for column in self.parsed['columns']:
+            if table and column[0] == table:
+                cols.append(column[1])
+
+            if not table:
+                cols.append(column[1])
 
         try:
             for j in self.parsed['joins']:
@@ -104,10 +111,10 @@ class Select(object):
         cols = []
         for column in self.parsed['columns']:
             if table and column[0] == table:
-                cols.append(column[1])
+                cols.append(column[0]+"."+column[1])
 
             if not table:
-                cols.append(column[1])
+                cols.append(column[0]+"."+column[1])
 
         return cols
 
