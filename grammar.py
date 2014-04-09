@@ -30,7 +30,7 @@ sel = Literal("select")
 fr = Suppress("from")
 whr = Suppress("where")
 
-location = Word(alphas, alphanums+"_"+"%"+":"+"/"+"+"+".")
+location = Word(alphas, alphanums+"_"+"%"+":"+"/"+"+"+"."+"@"+"?"+"=")
 
 column = Group(Optional(identifier+Suppress(".")) + identifier.setResultsName("col_name"))
 

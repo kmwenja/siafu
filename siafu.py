@@ -231,7 +231,9 @@ class Select(object):
                 vals = ""
                 values = row.values()
                 for i in range(len(values)):
-                    if type(u"") == type(values[i]):
+                    if type(1L) == type(values[i]):
+                        vals += str(values[i])
+                    elif type(u"") == type(values[i]):
                         vals += "\'"+values[i]+"\'"
                     else:
                         vals += repr(values[i])
@@ -289,7 +291,8 @@ class Siafu(object):
 
     def process_sql(self, sql):
         try:
-            sql_string = sql.lower()
+            # sql_string = sql.lower()
+            sql_string = sql
             res = grammar.sql.parseString(sql_string)
 
             cmd = res['db_cmd']
